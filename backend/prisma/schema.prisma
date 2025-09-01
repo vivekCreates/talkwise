@@ -44,14 +44,15 @@ model Conversation {
 }
 
 model Message {
-
+ 
   id            String       @id @default(uuid())
-  sender        String
+  sender        String        @default("user")
   content       String
+  answer        String
   userId        String
   user          User         @relation(fields: [userId], references: [id])
-  coversationId String
-  conversation  Conversation @relation(fields: [coversationId], references: [id])
+  conversationId String
+  conversation  Conversation @relation(fields: [conversationId], references: [id])
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt() @map("updated_at")
 

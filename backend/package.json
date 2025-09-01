@@ -31,9 +31,11 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
+    "@google/genai": "^1.16.0",
     "@prisma/client": "^6.15.0",
     "cloudinary": "^2.7.0",
     "express": "^5.1.0",
+    "groq-sdk": "^0.30.0",
     "multer": "^2.0.2"
   }
 }

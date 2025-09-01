@@ -27,9 +27,11 @@ app.get("/", (req, res) => {
 
 import userRoutes from "./routes/user.route";
 import conversationRoutes from "./routes/conversation.route";
+import messageRoutes from "./routes/message.route";
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/conversations", conversationRoutes);
+app.use("/api/v1/chat", messageRoutes);
 
 
 
