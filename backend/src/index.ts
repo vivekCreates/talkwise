@@ -25,9 +25,11 @@ app.get("/", (req, res) => {
 });
 
 
-import userRoutes from "./routes/user.routes";
+import userRoutes from "./routes/user.route";
+import conversationRoutes from "./routes/conversation.route";
 
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/conversations", conversationRoutes);
 
 
 

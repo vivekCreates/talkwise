@@ -13,16 +13,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
 
-model User{
-  @@map("users")
-
-  id String @id @default(uuid())
-  username String
-  email String @unique
-  password String
-  token String?
-  avatar String? @default("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzR0bIMZ71HVeR5zF4PihQaDvTQQk6bsVERw&s")
+  id        String   @id @default(uuid())
+  username  String
+  email     String   @unique
+  password  String
+  token     String?
+  avatar    String?  @default("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzR0bIMZ71HVeR5zF4PihQaDvTQQk6bsVERw&s")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt() @map("updated_at")
+
+  conversations Conversation[]
+  messages      Message[]
+
+  @@map("users")
+}
+
+model Conversation {
+
+  id        String    @id @default(uuid())
+  title     String?
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt() @map("updated_at")
+  Message   Message[]
+
+  @@map("converstions")
+}
+
+model Message {
+
+  id            String       @id @default(uuid())
+  sender        String
+  content       String
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  coversationId String
+  conversation  Conversation @relation(fields: [coversationId], references: [id])
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt() @map("updated_at")
+
+  @@map("messages")
 }

@@ -5,23 +5,24 @@ import { ApiResponse } from "../utils/apiResponse"
 import prisma from "../config/postgres";
 import jwt from "jsonwebtoken";
 import uploadImageOnCloudinary from '../utils/uploadOnCloudinary';
+import { IUser } from '../interfaces/user.interface';
 
 const options: {
-  httpOnly: boolean;
-  secure: boolean;
-  sameSite: "strict" | "lax" | "none";
-  maxAge: number;
+    httpOnly: boolean;
+    secure: boolean;
+    sameSite: "strict" | "lax" | "none";
+    maxAge: number;
 } = {
-  httpOnly: true,
-  secure: true,
-  sameSite: "strict",
-  maxAge: 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    maxAge: 24 * 60 * 60 * 1000,
 };
 
 
 export class UserController {
 
-    static async signUp(req: Request, res: Response,next:NextFunction) {
+    static async signUp(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {
             const { username, email, password } = req.body;
 
@@ -46,20 +47,20 @@ export class UserController {
             if (userExists) {
                 throw new Error("User already exists")
             }
-            
+
             const avatarLocalPath = req.file?.path;
             let avatar;
-            if(avatarLocalPath){
+            if (avatarLocalPath) {
                 avatar = await uploadImageOnCloudinary(avatarLocalPath);
             }
 
-            const hashPassword = await bcrypt.hash(password,10);
-            const user = await prisma.user.create({
+            const hashPassword = await bcrypt.hash(password, 10);
+            const user: IUser = await prisma.user.create({
                 data: {
                     username,
                     email,
                     avatar: avatar?.url,
-                    password:hashPassword
+                    password: hashPassword
                 }
             })
 
@@ -75,7 +76,7 @@ export class UserController {
         }
     }
 
-    static async signIn(req: Request, res: Response,next:NextFunction) {
+    static async signIn(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {
             const { email, password } = req.body;
 
@@ -83,7 +84,7 @@ export class UserController {
                 throw new ApiError(400, "All Fields are Required");
             }
 
-            const userExists = await prisma.user.findFirst({
+            const userExists = await prisma.user.findUnique({
                 where: {
                     email
                 }
@@ -106,7 +107,7 @@ export class UserController {
                 { expiresIn: "7d" }
             );
 
-            const user = await prisma.user.update({
+            const user: IUser = await prisma.user.update({
                 where: {
                     id: userExists?.id
                 },
@@ -117,7 +118,7 @@ export class UserController {
 
             return res
                 .status(201)
-                .cookie("token",token,options)
+                .cookie("token", token, options)
                 .json(
                     new ApiResponse(201, user, "user signIn successfully")
                 )
@@ -127,48 +128,48 @@ export class UserController {
         }
     }
 
-    static async logout(req:Request, res: Response,next:NextFunction){
-       try {
-         await prisma.user.update({
-             where:{
-                 id: req.user?.id
-             },
-             data:{token:null}
-         })
-       
- 
-         return res
-         .status(200)
-         .clearCookie("token",options)
-         .json(
-             new ApiResponse(200,{},"user logout successfully")
-         )
-     } catch (error: any) {
-       console.log(error);
-        next(error);
-     }
+    static async logout(req: Request, res: Response, next: NextFunction):Promise<any> {
+        try {
+            await prisma.user.update({
+                where: {
+                    id: req.user?.id
+                },
+                data: { token: null }
+            })
+
+
+            return res
+                .status(200)
+                .clearCookie("token", options)
+                .json(
+                    new ApiResponse(200, {}, "user logout successfully")
+                )
+        } catch (error: any) {
+            console.log(error);
+            next(error);
+        }
 
 
     }
 
-    static async getCurrentUser(req:Request, res: Response,next:NextFunction){
+    static async getCurrentUser(req: Request, res: Response, next: NextFunction):Promise<any> {
         try {
-            const user = await prisma.user.findFirst({
-                where:{
-                    id:req.user?.id
+            const user: IUser | null = await prisma.user.findUnique({
+                where: {
+                    id: req.user?.id
                 }
             })
-          
+
             return res
-            .status(200)
-            .json(
-                new ApiResponse(200,user,"user profile fetch successfully")
-            )
+                .status(200)
+                .json(
+                    new ApiResponse(200, user, "user profile fetch successfully")
+                )
         } catch (error: any) {
-          console.log(error);
-           next(error);
+            console.log(error);
+            next(error);
         }
-   
-   
+
+
     }
 }
