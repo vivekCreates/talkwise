@@ -1,19 +1,22 @@
 import React from "react";
 import { useUser } from "../contexts/user.context";
 import { Navigate } from "react-router-dom";
+import Loader from "../components/Loader";
 
 const Protected = ({ children }: { children: React.ReactNode }) => {
   const { user, token,isLoading } = useUser();
+  console.log("user",user);
+  console.log("token",token);
 
-  // 🔄 While checking user (API/localStorage), show a loader
+
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">
+        <Loader/>
+    </div>;
   }
 
-  // ❌ If not logged in
 if (!token || !user?.id) return <Navigate to="/sign-in" replace />;
 
-  // ✅ If logged in
   return <>{children}</>;
 };
 

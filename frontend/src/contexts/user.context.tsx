@@ -43,13 +43,13 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
       setToken(storedToken);
+      navigate("/");
     }else{
       getCurrentUser()
     }
   }, []);
 
 
-  console.log(user)
   const signUp = async (userDetails: IUserInfo) => {
     try {
       setIsLoading(true);
@@ -69,10 +69,10 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setIsLoading(true);
       const res = await signInApi(userDetails);
       if (!res.success) return toast.error(res.message || "Sign in failed");
-      setUser(res.data);
+      setUser(res.data.user);
       setToken(res.data.token);
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data));
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       toast.success("Welcome back!");
       navigate("/");
     } catch {
@@ -103,11 +103,11 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setIsLoading(true);
       const res = await getCurrentUserApi();
       if (res.success) {
-        setUser(res.data);
+        setUser(res.data.user);
         setToken(res.data.token);
 
         localStorage.setItem("token", res.data.token)
-        localStorage.setItem("user", JSON.stringify(res.data));
+        localStorage.setItem("user", JSON.stringify(res.data.user));
 
       }
     } finally {
