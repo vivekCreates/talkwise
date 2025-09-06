@@ -45,7 +45,7 @@ export class UserController {
             })
 
             if (userExists) {
-                throw new Error("User already exists")
+                throw new ApiError(409, "User already exists");
             }
 
             const avatarLocalPath = req.file?.path;

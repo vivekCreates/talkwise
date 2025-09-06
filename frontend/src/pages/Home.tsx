@@ -1,8 +1,8 @@
-import HeroText from './components/HeroText'
-import Sidebar from './components/Sidebar'
-import { SquarePen } from 'lucide-react'
+import React from 'react'
+import HeroText from '../components/HeroText'
+import { Sidebar, SquarePen } from 'lucide-react'
 
-const App = () => {
+const Home = () => {
   return (
     <div className='w-screen h-screen flex'>
       <Sidebar />
@@ -23,4 +23,4 @@ const App = () => {
   )
 }
 
-export default App
+export default Home

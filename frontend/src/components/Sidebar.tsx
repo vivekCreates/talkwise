@@ -9,7 +9,7 @@ const Sidebar = () => {
         <div className="w-[16rem]  h-screen text-sm bg-primary flex flex-col">
             <div className="p-2 flex flex-col gap-2">
                 <div className="flex items-center justify-between h-fit p-2">
-                    <img src="../../public/ChatGPT-Logo.svg.png" width={20} alt="" />
+                    <img src="/ChatGPT-Logo.svg.png" width={20} alt="" />
                     <PanelLeft width={20} />
                 </div>
                 <div className="flex flex-col">
