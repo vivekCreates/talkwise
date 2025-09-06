@@ -5,6 +5,8 @@ const api = axios.create({
     baseURL: "http://localhost:8000/api/v1",
 });
 
+axios.defaults.withCredentials = true; // to send cookies with requests
+
 export interface ApiResponse{
     data: any;
     message: string;
@@ -14,9 +16,10 @@ export interface ApiResponse{
 
 
 export interface IUser  {
+    id:string;
     username:string;
     email:string;
-    password:string;
+    token:string;
     avatar?:string | null;  
     createdAt:Date;
     updatedAt:Date;

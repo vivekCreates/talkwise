@@ -15,7 +15,7 @@ const options: {
 } = {
     httpOnly: true,
     secure: true,
-    sameSite: "strict",
+    sameSite: "lax",
     maxAge: 24 * 60 * 60 * 1000,
 };
 
@@ -84,17 +84,17 @@ export class UserController {
                 throw new ApiError(400, "All Fields are Required");
             }
 
-            const userExists = await prisma.user.findUnique({
+            const user = await prisma.user.findUnique({
                 where: {
                     email
                 }
             })
 
-            if (!userExists) {
+            if (!user) {
                 throw new ApiError(404, "User not found")
             }
 
-            const isPasswordCorrect = await bcrypt.compare(password, userExists?.password)
+            const isPasswordCorrect = await bcrypt.compare(password, user?.password)
 
 
             if (!isPasswordCorrect) {
@@ -102,25 +102,17 @@ export class UserController {
             }
 
             const token = jwt.sign(
-                { id: userExists?.id },
+                { id: user?.id },
                 process.env.JWT_SECRET_KEY! as string,
                 { expiresIn: "7d" }
             );
 
-            const user: IUser = await prisma.user.update({
-                where: {
-                    id: userExists?.id
-                },
-                data: {
-                    token
-                }
-            })
 
             return res
                 .status(201)
                 .cookie("token", token, options)
                 .json(
-                    new ApiResponse(201, user, "user signIn successfully")
+                    new ApiResponse(201, {user,token}, "user signIn successfully")
                 )
         } catch (error: any) {
             console.log(error);
@@ -130,14 +122,6 @@ export class UserController {
 
     static async logout(req: Request, res: Response, next: NextFunction):Promise<any> {
         try {
-            await prisma.user.update({
-                where: {
-                    id: req.user?.id
-                },
-                data: { token: null }
-            })
-
-
             return res
                 .status(200)
                 .clearCookie("token", options)

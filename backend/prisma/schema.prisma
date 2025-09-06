@@ -19,7 +19,6 @@ model User {
   username  String
   email     String   @unique
   password  String
-  token     String?
   avatar    String?  @default("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzR0bIMZ71HVeR5zF4PihQaDvTQQk6bsVERw&s")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt() @map("updated_at")
